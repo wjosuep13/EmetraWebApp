@@ -3,13 +3,14 @@ import api from "../api/api";
 export interface Photo {
   id: string;
   image: string;
-  date: string;
-  status: string;
+  date: Date;
+  status:number;
 }
 
 export const PhotosService = {
-  getAll: async (): Promise<Photo[]> => {
-    const { data } = await api.get("/photos");
+  getAll: async (cruise_id:number,date:Date,page:number): Promise<Photo[]> => {
+    const params=`photo_date=${date}&id_cruise=${cruise_id}&page=${page}&limit=10`;
+    const { data } = await api.get(`/photos?${params}`);
     return data;
   },
 

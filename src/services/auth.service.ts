@@ -12,7 +12,8 @@ export interface LoginResponse {
 export const AuthService = {
     login: async (credentials: LoginRequest): Promise<LoginResponse> => {
         const { data } = await api.post('auth/login', credentials);
-        console.log(data);
+        localStorage.setItem("accessToken", data.access_token);
+
         return data;
     }
 };
