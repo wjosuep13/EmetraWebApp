@@ -1,6 +1,6 @@
 //Screen basic whit a list of photos
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Image, Spinner, Text, Select, createListCollection, Portal, Input, Field } from '@chakra-ui/react';
+import { Box, Grid, Image, Spinner, Text, Select, createListCollection, Portal, Input, Field, Button } from '@chakra-ui/react';
 import { CruiseService } from '@/services/cruise.service';
 import { PhotosService, type Photo } from '@/services/photos.service';
 
@@ -9,20 +9,16 @@ const PhotosScreen: React.FC = () => {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [cruiseCollection, setCruiseCollection] = useState();
     const [selectedCruise, setSelectedCruise] = useState<string>("")
-    const [date, setDate] = useState<Date>(new Date());
+    const [date, setDate] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
 
-    const formatDateForInput = (d: Date) => {
-        const year = d.getFullYear()
-        const month = String(d.getMonth() + 1).padStart(2, "0")
-        const day = String(d.getDate()).padStart(2, "0")
-        return `${year}-${month}-${day}`
-    }
+  
 
 
-    const fetchPhotos = async (cruise_id: number, date: Date, page: number) => {
+    const fetchPhotos = async (cruise_id: number, date: string, page: number) => {
         try {
             const data = await PhotosService.getAll(cruise_id, date, page);
+            console.log(data);
             setPhotos(data);
         } catch (error) {
             console.error("Error fetching photos:", error);
@@ -36,7 +32,6 @@ const PhotosScreen: React.FC = () => {
         try {
             setLoading(true);
             const cruises = await CruiseService.get();
-            console.log("Fetched cruises:", cruises);
             const cruiseItems = cruises.map((cruise) => ({
                 label: cruise.cruise_name,
                 value: cruise.id,
@@ -52,8 +47,6 @@ const PhotosScreen: React.FC = () => {
         }
     }
 
-
-
     useEffect(() => {
         fetchCruises();
     }
@@ -68,7 +61,10 @@ const PhotosScreen: React.FC = () => {
                 <Spinner size="xl" />
             ) : (
                 <>
-                    <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" w="100%">
+                    <Box display="flex" flexDirection="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        w="90%" gap="2">
                         <Select.Root
                             collection={cruiseCollection}
                             size="sm"
@@ -107,23 +103,33 @@ const PhotosScreen: React.FC = () => {
 
                         <Field.Root >
                             <Field.Label>Fecha</Field.Label>
-                            <Input placeholder="Fecha"  type='date' color='black' maxLength={8}/>
+                            <Input placeholder="Fecha" type='date' color='black' 
+                             value={date}
+                             onChange={(e) => setDate(e.target.value)}
+                             />
                         </Field.Root>
+
+                        <Button alignSelf='flex-end' bg='#5cb85c' color='white'
+                        onClick={()=>fetchPhotos(parseInt(selectedCruise), date, 1)}
+                        >Obtener fotos</Button>
+
+
                     </Box>
 
-                    <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={6}>
+                  {photos&&  <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={6}>
                         {photos.map((photo, index) => (
                             <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden">
-                                <Image src={photo.image} alt={`Photo ${index + 1}`} boxSize="200px" objectFit="cover" />
+                                <Image src={photo.photo_path} alt={`Photo ${index + 1}`} boxSize="200px" objectFit="cover" />
                                 <Box p={4}>
                                     <Text fontSize="sm" color="gray.500">
-                                        {photo.date.toDateString()}
+                                        {photo.photo_date}
                                     </Text>
                                     <Text>Status: {photo.status}</Text>
                                 </Box>
                             </Box>
                         ))}
                     </Grid>
+                    }
                 </>
             )}
         </Box>
