@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Box, Grid, Image, Spinner, Text, Select, createListCollection, Portal, Input, Field, Button } from '@chakra-ui/react';
 import { CruiseService } from '@/services/cruise.service';
 import { PhotosService, type Photo } from '@/services/photos.service';
-
+import { useNavigate } from "react-router-dom";
+const PhotoStatus =
+["No Procesada",
+"Procesada exitosamente",
+"Rechazada"]
 
 const PhotosScreen: React.FC = () => {
     const [photos, setPhotos] = useState<Photo[]>([]);
@@ -11,8 +15,9 @@ const PhotosScreen: React.FC = () => {
     const [selectedCruise, setSelectedCruise] = useState<string>("")
     const [date, setDate] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
+    const navigate = useNavigate();
 
-  
+
 
 
     const fetchPhotos = async (cruise_id: number, date: string, page: number) => {
@@ -51,6 +56,11 @@ const PhotosScreen: React.FC = () => {
         fetchCruises();
     }
         , []);
+
+
+    const onPressPhoto = (photo: Photo) => {
+        navigate("/photo" , { state: { photo } });
+    }
 
     return (
         <Box p={4} backgroundColor="white" minH="100vh">
@@ -103,28 +113,29 @@ const PhotosScreen: React.FC = () => {
 
                         <Field.Root >
                             <Field.Label>Fecha</Field.Label>
-                            <Input placeholder="Fecha" type='date' color='black' 
-                             value={date}
-                             onChange={(e) => setDate(e.target.value)}
-                             />
+                            <Input placeholder="Fecha" type='date' color='black'
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                            />
                         </Field.Root>
 
                         <Button alignSelf='flex-end' bg='#5cb85c' color='white'
-                        onClick={()=>fetchPhotos(parseInt(selectedCruise), date, 1)}
+                            onClick={() => fetchPhotos(parseInt(selectedCruise), date, 1)}
                         >Obtener fotos</Button>
 
 
                     </Box>
 
-                  {photos&&  <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={6}>
+                    {photos && <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={6}>
                         {photos.map((photo, index) => (
-                            <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden">
+                            <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden" marginTop='8' onClick={() => onPressPhoto(photo)}>
                                 <Image src={photo.photo_path} alt={`Photo ${index + 1}`} boxSize="200px" objectFit="cover" />
                                 <Box p={4}>
                                     <Text fontSize="sm" color="gray.500">
                                         {photo.photo_date}
                                     </Text>
-                                    <Text>Status: {photo.status}</Text>
+                                    <Text fontSize="sm" color="gray.500">
+                                        Status: {PhotoStatus[photo.id_photo_status]}</Text>
                                 </Box>
                             </Box>
                         ))}

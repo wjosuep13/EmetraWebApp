@@ -1,7 +1,8 @@
 // App.tsx
 import { Routes, Route, useLocation } from "react-router-dom";
 import LoginScreen from "./Screens/Login";
-import PhotosScreen from "./Screens/PhotosScreen";
+import ListPhotosScreen from "./Screens/ListPhotosScreen";
+import PhotoScreen from "./Screens/PhotoScreen";
 import Header from "./components/Header";
 
 function App() {
@@ -20,7 +21,13 @@ function App() {
         <Route
           path="/photos"
           element={
-            <PhotosScreen />
+            <ListPhotosScreen />
+          }
+        />
+        <Route
+          path="/photo"
+          element={
+            <PhotoScreen />
           }
         />
       </Routes>
