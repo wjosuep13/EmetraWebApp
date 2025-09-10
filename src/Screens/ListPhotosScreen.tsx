@@ -129,7 +129,10 @@ const PhotosScreen: React.FC = () => {
                     {photos && <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={6}>
                         {photos.map((photo, index) => (
                             <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden" marginTop='8' onClick={() => onPressPhoto(photo)}>
-                                <Image src={photo.photo_path} alt={`Photo ${index + 1}`} boxSize="200px" objectFit="cover" />
+                                <Image 
+                                    src={`data:image/png;base64,${photo.photo_base64}`}
+
+                                alt={`Photo ${index + 1}`} boxSize="200px" objectFit="cover" />
                                 <Box p={4}>
                                     <Text fontSize="sm" color="gray.500">
                                         {photo.photo_date}

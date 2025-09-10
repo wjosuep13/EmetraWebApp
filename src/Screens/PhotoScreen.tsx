@@ -1,6 +1,6 @@
 //Screen basic whit a list of photos
 import React, { useEffect, useState } from 'react';
-import { Box, Spinner, Text, Image, } from '@chakra-ui/react';
+import { Box, Spinner, Text, Image, Button, } from '@chakra-ui/react';
 
 import { PhotosService, type PhotoDetail } from '@/services/photos.service';
 import { useLocation } from 'react-router-dom';
@@ -11,8 +11,8 @@ const PhotoScreen: React.FC = () => {
 
     const location = useLocation();
     const {photo} = location.state|| {} ;
-    const {photo_path} = photo || {};
-    console.log('photo_path:',photo_path);
+    const {photo_base64} = photo || {};
+    console.log('photo_path:',photo_base64);
 
     const blockPhoto = async (id: string) => {
         try {
@@ -29,7 +29,7 @@ const PhotoScreen: React.FC = () => {
         try {
             setLoading(true);
             const data = await PhotosService.getById(id);
-            console.log(data);
+            console.log('data:',data);
             setPhotoDetail(data);
         } catch (error) {
             console.error("Error fetching photo:", error);
@@ -60,16 +60,16 @@ const PhotoScreen: React.FC = () => {
                     color="black"
                 >
 
-                   {photo_path&&<Image
-                        src={photo_path}
-                        alt={`Photo 1`}
+                   {photo_base64&&<Image
+                                    src={`data:image/png;base64,${photo_base64}`}
+                                    alt={`Photo 1`}
                         boxSize="200px"
                         objectFit="cover"
                     />}
                 
                     <Text fontWeight='bold'>Fecha: </Text><Text >{photoDetail?.date}</Text>
                     <Text fontWeight='bold'>Hora: </Text><Text >{photoDetail?.time}</Text>
-                    <Text fontWeight='bold'>Vehículo: </Text><Text>{photoDetail?.vehicle.type} {photoDetail?.vehicle.brand} {photoDetail?.vehicle.color} {photoDetail?.vehicle.plate}</Text>
+                    <Text fontWeight='bold'>Vehículo: </Text><Text>{photoDetail?.consultaVehiculo.TIPO} {photoDetail?.consultaVehiculo.MARCA} {photoDetail?.consultaVehiculo.LINEA} {photoDetail?.consultaVehiculo.MODELO} {photoDetail?.consultaVehiculo.COLOR} {photoDetail?.consultaVehiculo.USO} {photoDetail?.consultaVehiculo.PLACA} {photoDetail?.consultaVehiculo.CC}</Text>
                     <Text fontWeight='bold'>Distancia: </Text><Text>{photoDetail?.distance}</Text>
                     <Text fontWeight='bold'>Archivo: </Text><Text>{photoDetail?.fileName}</Text>
                     <Text fontWeight='bold'>Ubicación: </Text><Text>{photoDetail?.location}</Text>
@@ -77,6 +77,9 @@ const PhotoScreen: React.FC = () => {
                     <Text fontWeight='bold'>Número de video: </Text><Text>{photoDetail?.videoNumber}</Text>
                     <Text fontWeight='bold'>Número de serie: </Text><Text>{photoDetail?.serialNumber}</Text>
                     <Text fontWeight='bold'>Velocidad medida: </Text><Text>{photoDetail?.measuredSpeed}</Text>
+                    <Button mt={4} color="white" variant='outline' bg='#5cb85c' onClick={() =>{}}>
+                        Procesar
+                    </Button>
                 </Box>
             )}
         </Box>

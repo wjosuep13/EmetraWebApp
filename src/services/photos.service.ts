@@ -2,24 +2,28 @@ import api from "../api/api";
 
 export interface Photo {
   id: string;
-  photo_path: string;
+  photo_base64: string;
   photo_date: string;
   id_photo_status: number;
 }
 export type Vehicle = {
-  type: string,
-  brand: string,
-  color: string,
-  plate: string
+  ESTADO: string,
+  PLACA: string,
+  MARCA: string,
+  LINEA: string,
+  MODELO: string,
+  COLOR: string,
+  TIPO: string
+  USO: string
+  CC: string
 }
 
 
 export type PhotoDetail = {
   id: number,
-  photo_path: string,
   date: string,
   time: string,
-  vehicle: Vehicle,
+  consultaVehiculo: Vehicle,
   distance: string,
   fileName: string,
   location: string,
@@ -49,6 +53,6 @@ export const PhotosService = {
   getById: async (id: string): Promise<PhotoDetail> => {
     const { data } = await api.get(`/photos/${id}`);
     console.log(data);
-    return { id: data.id, photo_path: data.photo_path, ...data.photo_info }
+    return { id: data.id, ...data.photo_info, consultaVehiculo: data.consultaVehiculo };
   },
 };
