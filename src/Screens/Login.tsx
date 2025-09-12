@@ -28,12 +28,11 @@ const LoginScreen: React.FC = () => {
 
     try {
       const response = await AuthService.login(payload);
-      console.log("Login success:", response);
 
       localStorage.setItem("accessToken", response.access_token);
 
       navigate("/photos");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Login error:", err);
       setError(err.response?.data?.message || "Login failed");
     } finally {

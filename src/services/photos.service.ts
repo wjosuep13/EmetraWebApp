@@ -21,16 +21,24 @@ export type Vehicle = {
 
 export type PhotoDetail = {
   id: number,
-  date: string,
-  time: string,
+  timestamp: Date,
   consultaVehiculo: Vehicle,
-  distance: string,
-  fileName: string,
   location: string,
   speedLimit: string,
   videoNumber: number,
   serialNumber: number,
   measuredSpeed: string
+}
+
+ type ProcessPhotoRequest=
+{
+  cruise:string,
+  timestamp: Date,
+  speed_limit_kmh: number,
+  current_speed_kmh: number,
+  lpNumber: string,
+  lpType: string,
+  photoId: number
 }
 
 export const PhotosService = {
@@ -55,4 +63,11 @@ export const PhotosService = {
     console.log(data);
     return { id: data.id, ...data.photo_info, consultaVehiculo: data.consultaVehiculo };
   },
+  processPhoto: async (params:ProcessPhotoRequest) => {
+
+    const { data } =  await api.post(`/processed-photo/send-speed-event`, params);
+    return data;
+  },
+
+
 };
